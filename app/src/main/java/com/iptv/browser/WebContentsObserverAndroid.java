@@ -1,4 +1,4 @@
-package com.iptv.mywebview;
+package com.iptv.browser;
 
 import android.util.Log;
 import org.chromium.content_public.browser.WebContents;

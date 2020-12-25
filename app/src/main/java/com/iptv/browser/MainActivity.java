@@ -127,8 +127,6 @@ public class MainActivity extends Activity {
   @Override
   public boolean onKeyUp(int keyCode, KeyEvent event) {
     Log.e(TAG, "onKeyUp:" + keyCode);
-    if (keyCode == KeyEvent.KEYCODE_BACK && web != null && web.goBack())
-      return true;
     return super.onKeyUp(keyCode, event);
   }
 
