@@ -87,7 +87,7 @@ public class MainActivity extends Activity {
     if (!TextUtils.isEmpty(mStartupUrl)) {
       shellUrl = mStartupUrl;
     } else {
-      shellUrl = "file:///android_asset/home.html";
+      shellUrl = "file:///android_asset/index.html";
     }
     web.loadUrl(shellUrl);
   }

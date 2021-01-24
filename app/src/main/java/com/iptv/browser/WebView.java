@@ -22,14 +22,12 @@ import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_shell.Shell;
 import org.chromium.content_shell.ShellManager;
 import org.chromium.ui.base.EventForwarder;
-import org.chromium.ui.base.ResourceBundle;
 
 public class WebView extends ShellManager {
   private static final String COMMAND_LINE_FILE = "/data/local/tmp/shell-command-line";
 
   public static void attachBaseContext(Application app) {
     ContextUtils.initApplicationContext(app);
-    ResourceBundle.setNoAvailableLocalePaks();
     PathUtils.setPrivateDataDirectorySuffix("data");
     ApplicationStatus.initialize(app);
   }
