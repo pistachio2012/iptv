@@ -4,7 +4,7 @@
     package="com.iptv.browser">
 
     <application
-        android:name="com.iptv.browser.MainApplication"
+        android:name=".MainApplication"
         android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

@@ -20,14 +20,14 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 import com.iptv.ijkplayer.IjkVideoView;
 import com.iptv.ijkplayer.AndroidMediaController;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements WebView.StartupCallback {
   private final String TAG = "MainActivity";
   private String mStartupUrl;
 
   private FrameLayout mRoot = null;
   private IjkVideoView mVideoView = null;
   private WebView web = null;
-  private WebContentsObserverAndroid mWebContentsObserver = null;
+  private WebViewObserver mWebViewObserver = null;
   private AndroidMediaController mMediaController;
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -48,41 +48,15 @@ public class MainActivity extends Activity {
     mRoot.addView(mVideoView, layoutParams);
 
     WebView.initWebView();
-    web = new WebView(this, savedInstanceState, new WebView.StartupCallback() {
-      @Override
-      public void onSuccess() {
-        Log.i(TAG, "WebView onSuccess.");
-        finishInitialization(savedInstanceState);
-      }
-
-      @Override
-      public void onFailure() {
-        Log.i(TAG, "WebView onFailure!!!");
-        initializationFailed();
-      }
-
-      @Override
-      public void onCreateTab(int id) {
-        Log.i(TAG, "WebView onCreateTab:" + id);
-        initTab(id);
-      }
-
-      @Override
-      public void onDestroyTab(int id) {
-        Log.i(TAG, "WebView onDestroyTab:" + id);
-      }
-    });
+    web = new WebView(this, this);
     mRoot.addView(web, layoutParams);
     mStartupUrl = getUrlFromIntent(getIntent());
   }
 
-  private void initTab(int id) {
-    mWebContentsObserver = new WebContentsObserverAndroid(web);
-    web.addJavascriptInterface(new MediaPlayerImpl(this, mVideoView), "MediaPlayerImpl");
-    web.addInitJavascriptString(getInitJSString());
-  }
-
-  private void finishInitialization(Bundle savedInstanceState) {
+  @Override
+  public void onSuccess() {
+    Log.i(TAG, "WebView onSuccess.");
+    mWebViewObserver = new WebViewObserver(web);
     String shellUrl;
     if (!TextUtils.isEmpty(mStartupUrl)) {
       shellUrl = mStartupUrl;
@@ -92,36 +66,23 @@ public class MainActivity extends Activity {
     web.loadUrl(shellUrl);
   }
 
-  private String getInitJSString() {
-    String script = "";
-    try {
-      InputStream is = getAssets().open("init.js", AssetManager.ACCESS_STREAMING);
-      StringBuffer sb = new StringBuffer();
-      byte[] str = new byte[256];
-      int ret = is.read(str, 0, 256);
-      while(ret > 0) {
-        sb.append(new String(str, 0, ret, "UTF-8"));
-        ret = is.read(str, 0, 256);
-      }
-      script = sb.toString();
-    } catch (Exception e) {
-      Log.e(TAG, "open helper error:" + e);
-      script = "";
-    }
-    return script;
-  }
-
-  private void initializationFailed() {
-    Log.e(TAG, "ContentView initialization failed.");
+  @Override
+  public void onFailure() {
+    Log.i(TAG, "WebView onFailure!!!");
     Toast.makeText(MainActivity.this, "ContentView initialization failed.", Toast.LENGTH_SHORT).show();
     finish();
   }
 
   @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    if (web != null)
-      web.onSaveInstanceState(outState);
+  public void onCreateTab(int id) {
+    Log.i(TAG, "WebView onCreateTab:" + id);
+    web.addJavascriptInterface(new MediaPlayerImpl(this, mVideoView), "MediaPlayerImpl");
+    web.addInitJavascriptString(getInitJSString());
+  }
+
+  @Override
+  public void onDestroyTab(int id) {
+    Log.i(TAG, "WebView onDestroyTab:" + id);
   }
 
   @Override
@@ -161,5 +122,24 @@ public class MainActivity extends Activity {
 
   private static String getUrlFromIntent(Intent intent) {
     return intent != null ? intent.getDataString() : null;
+  }
+
+  private String getInitJSString() {
+    String script = "";
+    try {
+      InputStream is = getAssets().open("init.js", AssetManager.ACCESS_STREAMING);
+      StringBuffer sb = new StringBuffer();
+      byte[] str = new byte[256];
+      int ret = is.read(str, 0, 256);
+      while(ret > 0) {
+        sb.append(new String(str, 0, ret, "UTF-8"));
+        ret = is.read(str, 0, 256);
+      }
+      script = sb.toString();
+    } catch (Exception e) {
+      Log.e(TAG, "open helper error:" + e);
+      script = "";
+    }
+    return script;
   }
 }

@@ -3,7 +3,6 @@ package com.iptv.browser;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import java.lang.annotation.Annotation;
@@ -24,7 +23,7 @@ import org.chromium.content_shell.ShellManager;
 import org.chromium.ui.base.EventForwarder;
 
 public class WebView extends ShellManager {
-  private static final String COMMAND_LINE_FILE = "/data/local/tmp/shell-command-line";
+  private static final String COMMAND_LINE_FILE = "/data/local/tmp/command-line-config";
 
   public static void attachBaseContext(Application app) {
     ContextUtils.initApplicationContext(app);
@@ -35,14 +34,8 @@ public class WebView extends ShellManager {
   public static void initWebView() {
     if (!CommandLine.isInitialized())
       CommandLine.initFromFile(COMMAND_LINE_FILE);
+    CommandLine.getInstance().appendSwitch("disable-es3-gl-context");
     LibraryLoader.getInstance().ensureInitialized(LibraryProcessType.PROCESS_BROWSER);
-  }
-
-  public static void Config(final String key, final String value) {
-    if (TextUtils.isEmpty(value))
-      CommandLine.getInstance().appendSwitch(key);
-    else
-      CommandLine.getInstance().appendSwitchWithValue(key, value);
   }
 
   public interface StartupCallback {
@@ -53,13 +46,9 @@ public class WebView extends ShellManager {
   }
 
   private StartupCallback mStartupCallback = null;
-  public WebView(final Activity activity, final Bundle savedInstanceState, StartupCallback callback) {
+  public WebView(final Activity activity, StartupCallback callback) {
     super(activity);
-
-    getWindow().restoreInstanceState(savedInstanceState);
-    getWindow().setAnimationPlaceholderView(getContentViewRenderView().getSurfaceView());
     mStartupCallback = callback;
-
     BrowserStartupController.get(LibraryProcessType.PROCESS_BROWSER).startBrowserProcessesAsync(
         true, false, new BrowserStartupController.StartupCallback() {
           @Override
@@ -96,10 +85,6 @@ public class WebView extends ShellManager {
       launchUrl(url);
   }
 
-  public void onSaveInstanceState(Bundle outState) {
-    getWindow().saveInstanceState(outState);
-  }
-
   public void onStart() {
     WebContents webContents = getActiveWebContents();
     if (webContents != null) webContents.onShow();
@@ -107,10 +92,6 @@ public class WebView extends ShellManager {
 
   public void onDestroy() {
     destroy();
-  }
-
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    getWindow().onActivityResult(requestCode, resultCode, data);
   }
 
   public WebContents getActiveWebContents() {
