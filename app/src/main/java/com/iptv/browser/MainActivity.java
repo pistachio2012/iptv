@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
     mVideoView = new IjkVideoView(this);
     mRoot.addView(mVideoView, layoutParams);
 
-    WebView.initWebView();
+    WebView.Init(this);
     web = new WebView(this, this);
     mRoot.addView(web, layoutParams);
     mStartupUrl = getUrlFromIntent(getIntent());
@@ -56,7 +56,6 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
   @Override
   public void onSuccess() {
     Log.i(TAG, "WebView onSuccess.");
-    mWebViewObserver = new WebViewObserver(web);
     String shellUrl;
     if (!TextUtils.isEmpty(mStartupUrl)) {
       shellUrl = mStartupUrl;
@@ -76,6 +75,8 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
   @Override
   public void onCreateTab(int id) {
     Log.i(TAG, "WebView onCreateTab:" + id);
+    if (mWebViewObserver == null)
+      mWebViewObserver = new WebViewObserver(web);
     web.addJavascriptInterface(new MediaPlayerImpl(this, mVideoView), "MediaPlayerImpl");
     web.addInitJavascriptString(getInitJSString());
   }

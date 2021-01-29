@@ -10,7 +10,6 @@ import java.lang.annotation.Annotation;
 import org.chromium.base.ApplicationStatus;
 import org.chromium.base.CommandLine;
 import org.chromium.base.ContextUtils;
-import org.chromium.base.library_loader.LibraryLoader;
 import org.chromium.base.library_loader.LibraryProcessType;
 import org.chromium.base.PathUtils;
 import org.chromium.base.ThreadUtils;
@@ -23,19 +22,14 @@ import org.chromium.content_shell.ShellManager;
 import org.chromium.ui.base.EventForwarder;
 
 public class WebView extends ShellManager {
-  private static final String COMMAND_LINE_FILE = "/data/local/tmp/command-line-config";
-
-  public static void attachBaseContext(Application app) {
-    ContextUtils.initApplicationContext(app);
+  public static void Init(Activity a) {
+    ContextUtils.initApplicationContext(a.getApplication());
     PathUtils.setPrivateDataDirectorySuffix("data");
-    ApplicationStatus.initialize(app);
-  }
+    ApplicationStatus.initialize(a.getApplication());
 
-  public static void initWebView() {
     if (!CommandLine.isInitialized())
-      CommandLine.initFromFile(COMMAND_LINE_FILE);
+      CommandLine.initFromFile("/data/local/tmp/command-line");
     CommandLine.getInstance().appendSwitch("disable-es3-gl-context");
-    LibraryLoader.getInstance().ensureInitialized(LibraryProcessType.PROCESS_BROWSER);
   }
 
   public interface StartupCallback {
