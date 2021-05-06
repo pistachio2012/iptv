@@ -1,9 +1,8 @@
 package com.iptv.browser;
 
 import android.app.Activity;
-import android.app.Application;
-import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import java.lang.annotation.Annotation;
 
@@ -93,11 +92,9 @@ public class WebView extends ShellManager {
     return shell != null ? shell.getWebContents() : null;
   }
 
-  public void dispatchCustomKeyEvent(KeyEvent event) {
-    ThreadUtils.runOnUiThread(() -> {
-      if (getActiveWebContents() != null)
-        getActiveWebContents().getEventForwarder().dispatchKeyEvent(event);
-    });
+  @Override
+  public boolean dispatchKeyEvent(KeyEvent event) {
+    return super.dispatchKeyEvent(event);
   }
 
   private JavascriptInjector getJavascriptInjector() {

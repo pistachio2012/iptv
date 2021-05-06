@@ -1,24 +1,24 @@
+
 package com.iptv.browser;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
-import android.content.res.AssetManager;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import android.widget.FrameLayout;
-import android.view.Gravity;
+import android.widget.Toast;
+import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 
+import com.iptv.ijkplayer.IjkVideoView;
 import org.chromium.content.browser.JavascriptInterface;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-import com.iptv.ijkplayer.IjkVideoView;
-import com.iptv.ijkplayer.AndroidMediaController;
 
 public class MainActivity extends Activity implements WebView.StartupCallback {
   private final String TAG = "MainActivity";
@@ -28,7 +28,6 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
   private IjkVideoView mVideoView = null;
   private WebView web = null;
   private WebViewObserver mWebViewObserver = null;
-  private AndroidMediaController mMediaController;
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -60,7 +59,7 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
     if (!TextUtils.isEmpty(mStartupUrl)) {
       shellUrl = mStartupUrl;
     } else {
-      shellUrl = "file:///android_asset/index.html";
+      shellUrl = "https://www.baidu.com";
     }
     web.loadUrl(shellUrl);
   }

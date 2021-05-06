@@ -1,13 +1,12 @@
 package com.iptv.browser;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import java.lang.Runnable;
 import android.os.Handler;
+import java.lang.Runnable;
 
-import org.chromium.content.browser.JavascriptInterface;
 import com.iptv.ijkplayer.IjkVideoView;
+import org.chromium.content.browser.JavascriptInterface;
 
 public class MediaPlayerImpl {
   private final String TAG = "MediaPlayerImpl";

@@ -1,9 +1,10 @@
 package com.iptv.browser;
 
 import android.util.Log;
+import java.lang.ref.WeakReference;
+
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.WebContentsObserver;
-import java.lang.ref.WeakReference;
 
 public class WebViewObserver extends WebContentsObserver {
   private static final String TAG = "observer";
