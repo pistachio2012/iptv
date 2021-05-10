@@ -16,16 +16,24 @@ import android.widget.Toast;
 import java.nio.charset.StandardCharsets;
 import java.io.InputStream;
 
-import com.iptv.ijkplayer.IjkVideoView;
-import org.chromium.content.browser.JavascriptInterface;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+
+import com.iptv.ijkplayer.IjkVideoView;
+import com.iptv.plugin.Authentication;
+import com.iptv.plugin.MediaPlayerImpl;
+import com.iptv.plugin.Utility;
 
 public class MainActivity extends Activity implements WebView.StartupCallback {
   private final String TAG = "MainActivity";
   private String mStartupUrl;
 
   private FrameLayout mRoot = null;
+
   private IjkVideoView mVideoView = null;
+  private Authentication mAuthentication = null;
+  private MediaPlayerImpl mMediaPlayerImpl = null;
+  private Utility mUtility = null;
+
   private WebView web = null;
   private WebViewObserver mWebViewObserver = null;
   @Override
@@ -50,6 +58,10 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
     web = new WebView(this, this);
     mRoot.addView(web, layoutParams);
     mStartupUrl = getUrlFromIntent(getIntent());
+
+    mAuthentication = new Authentication(this);
+    mUtility = new Utility(this);
+    mMediaPlayerImpl = new MediaPlayerImpl(this, mVideoView, mUtility);
   }
 
   @Override
@@ -76,7 +88,10 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
     Log.i(TAG, "WebView onCreateTab:" + id);
     if (mWebViewObserver == null)
       mWebViewObserver = new WebViewObserver(web);
-    web.addJavascriptInterface(new MediaPlayerImpl(this, mVideoView), "MediaPlayerImpl");
+
+    web.addJavascriptInterface(mAuthentication, "Authentication");
+    web.addJavascriptInterface(mMediaPlayerImpl, "MediaPlayerImpl");
+    web.addJavascriptInterface(mUtility, "Utility");
     web.addInitJavascriptString(getInitJSString());
   }
 
@@ -89,6 +104,13 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
   public boolean onKeyUp(int keyCode, KeyEvent event) {
     Log.e(TAG, "onKeyUp:" + keyCode);
     return super.onKeyUp(keyCode, event);
+  }
+
+  public void sendKeyEvent(final int keyCode) {
+    runOnUiThread(() -> {
+      KeyEvent e = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
+      web.dispatchKeyEvent(e);
+    });
   }
 
   @Override
