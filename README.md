@@ -23,4 +23,4 @@
 + init.js中定义了MediaPlayer Object
 + MainActivity.java中创建了IjkVideoView和WebView,并且连接MediaPlayer和MediaPlayerImpl
 ------
-+ 有问题可以发邮件: pistachio2012@126.com
++ 有问题可以发邮件: pistachio2012@ranpeng.fun
