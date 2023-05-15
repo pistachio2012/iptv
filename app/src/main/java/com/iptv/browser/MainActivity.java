@@ -16,9 +16,6 @@ import android.widget.Toast;
 import java.nio.charset.StandardCharsets;
 import java.io.InputStream;
 
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
-
-import com.iptv.ijkplayer.IjkVideoView;
 import com.iptv.plugin.Authentication;
 import com.iptv.plugin.MediaPlayerImpl;
 import com.iptv.plugin.Utility;
@@ -29,7 +26,6 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
 
   private FrameLayout mRoot = null;
 
-  private IjkVideoView mVideoView = null;
   private Authentication mAuthentication = null;
   private MediaPlayerImpl mMediaPlayerImpl = null;
   private Utility mUtility = null;
@@ -50,10 +46,6 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
     mRoot = new FrameLayout(this);
     setContentView(mRoot, layoutParams);
 
-    IjkMediaPlayer.loadLibrariesOnce(null);
-    mVideoView = new IjkVideoView(this);
-    mRoot.addView(mVideoView, layoutParams);
-
     WebView.Init(this);
     web = new WebView(this, this);
     mRoot.addView(web, layoutParams);
@@ -61,7 +53,7 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
 
     mAuthentication = new Authentication(this);
     mUtility = new Utility(this);
-    mMediaPlayerImpl = new MediaPlayerImpl(this, mVideoView, mUtility);
+    mMediaPlayerImpl = new MediaPlayerImpl(this);
   }
 
   @Override
@@ -130,9 +122,6 @@ public class MainActivity extends Activity implements WebView.StartupCallback {
   @Override
   protected void onStop() {
     super.onStop();
-
-    mVideoView.stopPlayback();
-    mVideoView.release(true);
   }
 
   @Override
